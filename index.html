@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8B5CF6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TimeBox Ultimate">
+    <meta name="application-name" content="TimeBox Ultimate">
+    <meta name="description" content="AI-Powered Productivity Timer with Smart Auto-Detection">
+    
+    <title>TimeBox Ultimate - AI-Powered Productivity Timer</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- PWA Install Banner -->
+    <div id="installBanner" class="install-banner">
+        <div>📱 Install TimeBox as an app! ⚡ Faster • 🔔 Notifications • 📴 Works offline</div>
+        <div style="margin-top: 10px;">
+            <button id="installBtn" class="install-btn">🚀 Install Now</button>
+            <button id="dismissBtn" class="install-btn">Maybe Later</button>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="title-section">
+                    <h1 class="app-title">TimeBox Ultimate</h1>
+                    <p class="app-subtitle">AI-Powered Productivity • Focus • Achieve • Grow</p>
+                </div>
+                <div class="level-section">
+                    <div class="level-info">
+                        <div class="level-display">
+                            <span class="crown">👑</span>
+                            <span class="level-text">Level <span id="userLevel">1</span></span>
+                        </div>
+                        <div class="xp-text"><span id="userXP">0</span> XP</div>
+                        <div class="xp-bar">
+                            <div id="xpProgress" class="xp-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="sessionsToday">0</div>
+                    <div class="stat-label">Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">Complete</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-value" id="totalTime">0h</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Home Tab Content -->
+            <div id="homeTab" class="tab-content active">
+                <!-- Boxi AI Section -->
+                <div class="boxi-section">
+                    <div class="boxi-character">
+                        <div id="boxiEmoji" class="boxi-emoji">🤖</div>
+                        <div class="boxi-info">
+                            <div class="boxi-name">Boxi - Level <span id="boxiLevel">1</span></div>
+                            <div class="boxi-stats">
+                                <span class="heart">❤️</span> <span id="boxiHeartRate">60</span> BPM
+                                <span class="energy">⚡</span> <span id="boxiEnergy">100</span>%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="boxi-message">
+                        <p id="boxiMessage">🚀 Welcome to TimeBox Ultimate with SMART AUTO-DETECTION! Just start working and I'll detect what you're doing and suggest the perfect timer. Let's achieve greatness together! ⚡</p>
+                    </div>
+                    <div class="boxi-actions">
+                        <button id="getInsight" class="boxi-btn">🧠 Get Insights</button>
+                        <button id="testDetection" class="boxi-btn secondary">🧪 Test Smart Detection</button>
+                    </div>
+                </div>
+
+                <!-- Timer Section -->
+                <div class="timer-section">
+                    <div class="timer-circle">
+                        <svg class="timer-svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="none" class="timer-background"></circle>
+                            <circle id="timerProgress" cx="50" cy="50" r="45" stroke="url(#gradient)" stroke-width="4" fill="none" stroke-dasharray="282.7" stroke-dashoffset="282.7" stroke-linecap="round" class="timer-foreground"></circle>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#8B5CF6" />
+                                    <stop offset="100%" stop-color="#3B82F6" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="timer-content">
+                            <div id="timerDisplay" class="timer-time">25:00</div>
+                            <div id="sessionType" class="session-type">Work</div>
+                            <div id="timerStatus" class="timer-status">Ready to start</div>
+                        </div>
+                    </div>
+
+                    <!-- Current Task -->
+                    <div id="currentTaskSection" class="current-task">
+                        <div class="task-label">🎯 Current Quest:</div>
+                        <div id="currentTaskText" class="task-text">Select a task to begin</div>
+                        <div id="currentTaskProgress" class="task-progress">
+                            <div class="progress-text">Progress: 0/1 🍅 • 0min total</div>
+                            <div class="progress-bar">
+                                <div id="taskProgressFill" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="control-buttons">
+                        <button id="playPauseBtn" class="control-btn primary">
+                            <span id="playPauseIcon">▶️</span>
+                        </button>
+                        <button id="resetBtn" class="control-btn secondary">
+                            <span>🔄</span>
+                        </button>
+                        <button id="breakBtn" class="control-btn secondary">
+                            <span>☕</span>
+                        </button>
+                        <button id="voiceBtn" class="control-btn secondary">
+                            <span>🎤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Tab Content -->
+            <div id="tasksTab" class="tab-content">
+                <div class="tasks-section">
+                    <h2 class="section-title">📋 Quest Log</h2>
+                    
+                    <!-- Add Task -->
+                    <div class="add-task">
+                        <input type="text" id="newTaskInput" placeholder="What epic quest will you embark on today?" class="task-input">
+                        <button id="addTaskBtn" class="add-btn">➕</button>
+                    </div>
+                    
+                    <!-- Tasks List -->
+                    <div id="tasksList" class="tasks-list">
+                        <div class="empty-tasks">
+                            <div class="empty-icon">🎯</div>
+                            <div class="empty-title">No quests yet!</div>
+                            <div class="empty-subtitle">Add your first task to begin your adventure! 🚀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab Content -->
+            <div id="statsTab" class="tab-content">
+                <div class="stats-section">
+                    <h2 class="section-title">📊 Performance Analytics</h2>
+                    
+                    <!-- Detailed Stats -->
+                    <div class="detailed-stats">
+                        <div class="stat-group">
+                            <h3 class="stat-group-title">🎯 Today's Performance</h3>
+                            <div class="stat-items">
+                                <div class="stat-item">
+                                    <span class="stat-name">Focus Sessions</span>
+                                    <span class="stat-value" id="detailedSessions">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-name">Total Focus Time</span>
+                                    <span class="stat-value" id="detailedFocusTime">0 minutes</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-name">Tasks Completed</span>
+                                    <span class="stat-value" id="detailedTasksCompleted">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-name">Productivity Score</span>
+                                    <span class="stat-value" id="productivityScore">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-group">
+                            <h3 class="stat-group-title">🔥 Streaks & Achievements</h3>
+                            <div class="achievement-grid">
+                                <div class="achievement-card">
+                                    <div class="achievement-icon">🏆</div>
+                                    <div class="achievement-title">Focus Master</div>
+                                    <div class="achievement-desc">Complete 10 sessions</div>
+                                    <div class="achievement-progress">Progress: 0/10</div>
+                                </div>
+                                <div class="achievement-card">
+                                    <div class="achievement-icon">⚡</div>
+                                    <div class="achievement-title">Speed Runner</div>
+                                    <div class="achievement-desc">5 sessions in one day</div>
+                                    <div class="achievement-progress">Progress: 0/5</div>
+                                </div>
+                                <div class="achievement-card">
+                                    <div class="achievement-icon">📚</div>
+                                    <div class="achievement-title">Task Crusher</div>
+                                    <div class="achievement-desc">Complete 25 tasks</div>
+                                    <div class="achievement-progress">Progress: 0/25</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab Content -->
+            <div id="settingsTab" class="tab-content">
+                <div class="settings-section">
+                    <h2 class="section-title">⚙️ Settings</h2>
+                    
+                    <div class="settings-groups">
+                        <div class="setting-group">
+                            <h3 class="setting-group-title">⏰ Timer Settings</h3>
+                            <div class="setting-item">
+                                <label class="setting-label">Work Duration (minutes)</label>
+                                <input type="number" id="workDuration" class="setting-input" value="25" min="1" max="60">
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">Short Break (minutes)</label>
+                                <input type="number" id="shortBreak" class="setting-input" value="5" min="1" max="30">
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">Long Break (minutes)</label>
+                                <input type="number" id="longBreak" class="setting-input" value="15" min="5" max="60">
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <h3 class="setting-group-title">🔔 Notifications</h3>
+                            <div class="setting-item">
+                                <label class="setting-label">Sound Alerts</label>
+                                <input type="checkbox" id="soundAlerts" class="setting-checkbox" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">Browser Notifications</label>
+                                <input type="checkbox" id="browserNotifications" class="setting-checkbox" checked>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <h3 class="setting-group-title">🧠 Smart Features</h3>
+                            <div class="setting-item">
+                                <label class="setting-label">Auto-Detection</label>
+                                <input type="checkbox" id="autoDetection" class="setting-checkbox" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">Smart Suggestions</label>
+                                <input type="checkbox" id="smartSuggestions" class="setting-checkbox" checked>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <h3 class="setting-group-title">💾 Data Management</h3>
+                            <div class="setting-actions">
+                                <button id="exportData" class="setting-btn">📤 Export Data</button>
+                                <button id="importData" class="setting-btn">📥 Import Data</button>
+                                <button id="clearData" class="setting-btn danger">🗑️ Clear All Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" data-tab="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" data-tab="tasks">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Tasks</span>
+            </button>
+            <button class="nav-btn" data-tab="stats">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Stats</span>
+            </button>
+            <button class="nav-btn" data-tab="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Smart Detection Modal -->
+    <div id="smartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div id="smartEmoji" class="modal-emoji">💻</div>
+                <div id="smartTitle" class="modal-title">Coding Detected!</div>
+                <div id="smartSubtitle" class="modal-subtitle">Suggested Timer: 50 minutes • Detected: URL</div>
+                <div class="confidence-badge">🧠 Smart Detection with 90% confidence</div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-question">Which task will you work on?</div>
+                <div id="smartTasks" class="smart-tasks">
+                    <!-- Tasks will be populated by JS -->
+                </div>
+                
+                <button id="createNewTask" class="create-task-btn">➕ Create New Task</button>
+                
+                <div class="modal-actions">
+                    <button id="cancelSmart" class="modal-btn secondary">Cancel</button>
+                    <button id="customTime" class="modal-btn secondary">⏰ Custom Time</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        📴 Offline Mode Active - Data saved locally
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered successfully');
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
